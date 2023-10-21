@@ -1,7 +1,4 @@
 import json
-import threading
-
-import numpy as np
 import pyaudio
 from vosk import Model, KaldiRecognizer
 
@@ -16,11 +13,10 @@ class SpeechToText:
 
         self.format = pyaudio.paInt16  # Sampling size and format
         self.channels = 1  # Number of channels
-        self.chunk = 4096  # Number of frames per buffer
         self.input = True  # Specifies whether this is an input stream
 
         # Sampling rate in Hz is fixed to our chosen input device
-        self.rate = int(self.pyaudio.get_device_info_by_index(self.input_index)["defaultSampleRate"])
+        self.rate = 16000
 
         self.keyword = "Calisto"  # Custom keyword as wake word
         self.keyword_detected = False  # Boolean to detect if the keyword is detected
@@ -52,97 +48,34 @@ class SpeechToText:
                 self.input_index = index
                 print(f"Updated device input to: {mic_list[index]}")
 
-    def listen_for_keyword(self):
-
-        stream = self.pyaudio.open(
-            format=self.format,
-            channels=self.channels,
-            rate=self.rate,
-            input=self.input,
-            input_device_index=self.input_index,
-        )
-
-        while not self.keyword_detected:
-            data = stream.read(self.chunk, exception_on_overflow=False)
-
-            rms = np.sqrt(np.mean(np.frombuffer(data, dtype=np.int16) ** 2))
-            print(f"Amplitude right now: {rms}")
-
-            if rms > 30.0:
-                print("Reached threshold...")
-
-                # Initialize recognition thread
-                recognition_thread = threading.Thread(target=self.filter_for_keyword, args=(data,))
-
-                # Start a new thread for recognition process if not already running
-                if not recognition_thread.is_alive():
-                    recognition_thread.start()
-
-            if len(data) == 0:
-                print("No data received.")
-
-    # Function to parse an audio data object into text and filter for the keyword
-    def filter_for_keyword(self, data):
-        if self.recognizer.AcceptWaveform(data):
-            result = json.loads(self.recognizer.Result())
-            print(f"Heard something... {result}")
-
-            if self.keyword in result["text"].lower():
-                self.keyword_detected = True
-                print("Keyword detected! Starting application...")
-
-    # Function to listen for tasks
-    def listen_for_tasks(self):
+    # Function to listen for audio data
+    def listen_for_prompt(self):
         # Open the microphone stream
-        stream = self.pyaudio.open(
-            format=self.format,
-            channels=self.channels,
-            rate=self.rate,
-            input=self.input,
-            frames_per_buffer=self.chunk,
-            input_device_index=self.input_index
-        )
+        stream = self.pyaudio.open(format=self.format, channels=self.channels, rate=self.rate, input=self.input)
 
         print("Listening...")
 
-        while True:
-            # Store chunks of our audio queue into a variable -> The higher the parameter the longer the chunks
-            data = stream.read(4096)
-            # Check if data is empty -> No one is saying something
-            if len(data) == 0:
-                break
-            if self.recognizer.AcceptWaveform(data):
-                # Translate json string into python dictionary
-                result = json.loads(self.recognizer.Result())
-                # Set the keyword detection to False again
-                self.keyword_detected = False
-                # If the waveform is alright, return our result
-                return result
-
-    # Function to listen for audio data and then print it
-    def listen_and_print(self):
-        # Open the microphone stream
-        stream = self.pyaudio.open(
-            format=self.format,
-            channels=self.channels,
-            rate=self.rate,
-            input=self.input,
-            input_device_index=self.input_index
-        )
-
-        print("Listening...")
-
-        while True:
-            # Store chunks of our audio queue into a variable -> The higher the parameter the longer the chunks
-            data = stream.read(2048, exception_on_overflow=False)
-            # Check if data is empty -> No one is saying something
-            if len(data) == 0:
-                break
-            if self.recognizer.AcceptWaveform(data):
-                # Translate json string into python dictionary
-                result = json.loads(self.recognizer.Result())
-                # If the waveform is alright, return our result
-                self.print_audio(result["text"])
+        try:
+            while True:
+                # Read data with certain chunk rate
+                data = stream.read(4096)
+                # Stop the while loop if no audio data is heard
+                if len(data) == 0:
+                    print("Cannot hear any audio.")
+                    break
+                # If the vosk recognizer can do something with our audio
+                if self.recognizer.AcceptWaveform(data):
+                    # Save our result in a variable
+                    result = json.loads(self.recognizer.Result())
+                    # Extract the text
+                    text = result["text"]
+                    print(text)
+                    return text
+        except KeyboardInterrupt:
+            pass
+        finally:
+            stream.stop_stream()
+            stream.close()
 
     # Function to print audio_data
     @staticmethod

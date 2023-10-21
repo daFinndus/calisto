@@ -20,4 +20,5 @@ tts = pyTTS()
 print("Starting...\n")
 sleep(0.5)
 
-vosk_stt.listen_and_print()
+audio_data = vosk_stt.listen_for_prompt()
+tts.speak_text(audio_data)
