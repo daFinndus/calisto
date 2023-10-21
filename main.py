@@ -8,8 +8,6 @@ from time import sleep
 from voice.py_tts_x3 import TextToSpeech as pyTTS
 from voice.vosk_stt import SpeechToText as voskSTT
 
-"""from voice.sr_stt import SpeechToText as srSTT"""
-
 project_dir = os.path.dirname(os.path.abspath("main.py"))
 voice_dir = os.path.join(project_dir, "voice")
 model_dir = os.path.join(project_dir, "model")
@@ -20,5 +18,13 @@ tts = pyTTS()
 print("Starting...\n")
 sleep(0.5)
 
-audio_data = vosk_stt.listen_for_prompt()
-tts.speak_text(audio_data)
+
+# Listens for audio and then speaks it out loud
+def listen_and_speak():
+    while True:
+        audio_data = vosk_stt.listen_for_prompt()
+        tts.speak_text(audio_data)
+
+
+if __name__ == "__main__":
+    listen_and_speak()
