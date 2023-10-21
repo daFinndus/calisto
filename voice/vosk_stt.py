@@ -12,19 +12,20 @@ class SpeechToText:
         self.recognizer = KaldiRecognizer(self.model, 16000)  # Set up the recognizer
 
         self.pyaudio = pyaudio.PyAudio()  # Initialize the pyaudio object
-        self.input_device_index = 1  # Set the input device
+        self.input_index = 1  # Set the input device
 
         self.format = pyaudio.paInt16  # Sampling size and format
         self.channels = 1  # Number of channels
         self.chunk = 4096  # Number of frames per buffer
-        self.rate = 44100  # Sampling rate
         self.input = True  # Specifies whether this is an input stream
 
-        self.keyword = "Calisto"
+        # Sampling rate in Hz is fixed to our chosen input device
+        self.rate = int(self.pyaudio.get_device_info_by_index(self.input_index)["defaultSampleRate"])
 
-        self.keyword_detected = False
+        self.keyword = "Calisto"  # Custom keyword as wake word
+        self.keyword_detected = False  # Boolean to detect if the keyword is detected
 
-    # Function to print all available microphones
+    # Function to get all available microphones
     def get_microphone_list(self, method):  # Method to check what we want to do with the microphone_list
         mic_list = []  # Store all available mics in a list
         mic_amount = self.pyaudio.get_device_count()  # Outputs how many mics are available as an integer
@@ -37,6 +38,10 @@ class SpeechToText:
         elif method == "print":
             print(mic_list)
 
+    # Function to give information about the current microphone used
+    def get_microphone_info(self):
+        print(self.pyaudio.get_device_info_by_index(self.input_index))
+
     # Function to set our microphone to a specified microphone
     def set_microphone_device(self, mic_name, mic_list):
         # Numerate all our entries in mic_list
@@ -44,21 +49,8 @@ class SpeechToText:
             # Go through every mic entry until mic_name is detected
             if mic_name in mic:
                 # Update our device to certain index
-                self.input_device_index = index
+                self.input_index = index
                 print(f"Updated device input to: {mic_list[index]}")
-
-    # Function to give information about the current microphone used
-    def get_microphone_info(self):
-        print(self.pyaudio.get_device_info_by_index(self.input_device_index))
-
-    def recognize(self, data):
-        if self.recognizer.AcceptWaveform(data):
-            result = json.loads(self.recognizer.Result())
-            print(f"Heard something... {result}")
-
-            if self.keyword in result["text"].lower():
-                self.keyword_detected = True
-                print("Keyword detected! Starting application...")
 
     def listen_for_keyword(self):
 
@@ -67,20 +59,20 @@ class SpeechToText:
             channels=self.channels,
             rate=self.rate,
             input=self.input,
-            input_device_index=self.input_device_index,
+            input_device_index=self.input_index,
         )
 
         while not self.keyword_detected:
             data = stream.read(self.chunk, exception_on_overflow=False)
 
             rms = np.sqrt(np.mean(np.frombuffer(data, dtype=np.int16) ** 2))
-            print(f"Threshold right now: {rms}")
+            print(f"Amplitude right now: {rms}")
 
             if rms > 30.0:
                 print("Reached threshold...")
 
                 # Initialize recognition thread
-                recognition_thread = threading.Thread(target=self.recognize, args=(data,))
+                recognition_thread = threading.Thread(target=self.filter_for_keyword, args=(data,))
 
                 # Start a new thread for recognition process if not already running
                 if not recognition_thread.is_alive():
@@ -88,6 +80,16 @@ class SpeechToText:
 
             if len(data) == 0:
                 print("No data received.")
+
+    # Function to parse an audio data object into text and filter for the keyword
+    def filter_for_keyword(self, data):
+        if self.recognizer.AcceptWaveform(data):
+            result = json.loads(self.recognizer.Result())
+            print(f"Heard something... {result}")
+
+            if self.keyword in result["text"].lower():
+                self.keyword_detected = True
+                print("Keyword detected! Starting application...")
 
     # Function to listen for tasks
     def listen_for_tasks(self):
@@ -98,7 +100,7 @@ class SpeechToText:
             rate=self.rate,
             input=self.input,
             frames_per_buffer=self.chunk,
-            input_device_index=self.input_device_index
+            input_device_index=self.input_index
         )
 
         print("Listening...")
@@ -116,6 +118,31 @@ class SpeechToText:
                 self.keyword_detected = False
                 # If the waveform is alright, return our result
                 return result
+
+    # Function to listen for audio data and then print it
+    def listen_and_print(self):
+        # Open the microphone stream
+        stream = self.pyaudio.open(
+            format=self.format,
+            channels=self.channels,
+            rate=self.rate,
+            input=self.input,
+            input_device_index=self.input_index
+        )
+
+        print("Listening...")
+
+        while True:
+            # Store chunks of our audio queue into a variable -> The higher the parameter the longer the chunks
+            data = stream.read(2048, exception_on_overflow=False)
+            # Check if data is empty -> No one is saying something
+            if len(data) == 0:
+                break
+            if self.recognizer.AcceptWaveform(data):
+                # Translate json string into python dictionary
+                result = json.loads(self.recognizer.Result())
+                # If the waveform is alright, return our result
+                self.print_audio(result["text"])
 
     # Function to print audio_data
     @staticmethod
