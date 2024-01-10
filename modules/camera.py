@@ -1,3 +1,0 @@
-"""
-Class for object detection
-"""

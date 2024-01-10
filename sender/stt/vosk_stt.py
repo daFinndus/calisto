@@ -18,7 +18,6 @@ class SpeechToText:
         # Sampling rate in Hz is fixed to our chosen input device
         self._rate = 16000
 
-        self._keyword = "Calisto"  # Custom keyword as wake word
         self.keyword_detected = False  # Boolean to detect if the keyword is detected
 
     # Function to get all available microphones as a list
