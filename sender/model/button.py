@@ -4,7 +4,7 @@ from time import sleep
 
 class Button:
     def __init__(self):
-        GPIO.setwarnings(False)  # Mute all these stupid warnings, don't need them anyway
+        GPIO.setwarnings(False)  # Mute all these irrelevant warnings, don't need them anyway
         GPIO.setmode(GPIO.BOARD)
 
         # Create dictionary storaging button pins
