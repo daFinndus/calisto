@@ -1,5 +1,6 @@
 import random
 
+from modules.other_functions import OtherFunctions
 from modules.stepper_motor import StepperMotor
 from modules.temp_sens import TempSensor
 
@@ -8,8 +9,8 @@ class Response:
     def __init__(self):
         self.stepper_motor = StepperMotor()
         self.temp_sensor = TempSensor(1, 64)
+        self.other_functions = OtherFunctions()
 
-        # TODO: Also implement the motor
         self.function_dict = {
             'motor': {
                 'function': self.stepper_motor.do_clockwise_degrees,
@@ -19,7 +20,6 @@ class Response:
                     f'Ich habe den Motor bewegt.',
                 ]
             },
-            # FIXME: Temperature does not get refreshed, stays at the same value
             'temperature': {
                 'function': self.temp_sensor.measure_temp,
                 'return': [
@@ -28,9 +28,25 @@ class Response:
                     f'Wir haben gerade',
                 ],
             },
+            "time": {
+                "function": self.other_functions.get_current_time,
+                "return": [
+                    f'Die aktuelle Uhrzeit ist',
+                    f'Es ist momentan',
+                    f'Jetzt ist es'
+                    f'Wir haben gerade'
+                ],
+            },
+            'pi-temp': {
+                'function': self.other_functions.get_temperature_of_pi,
+                'return': [
+                    f'Die Temperatur des Raspberry Pi beträgt',
+                    f'Der Raspberry Pi hat',
+                    f'Mein Prozessor hat eine Temperatur von'
+                ],
+            }
         }
 
-        # TODO: Create more responses
         self.responses_dict = {
             'greeting': ['Hallo!', 'Hi!', 'Guten Tag!', 'Moin moin!'],
             'feeling': [
@@ -68,8 +84,11 @@ class Response:
         print(f'Amount: {amount}')
 
         if function == 'temperature':
-            self.function_dict[function]['function']()
             return f'{random.choice(self.function_dict[function]["return"])} {self.temp_sensor.measure_temp()} Grad Celsius.'
+        elif function == 'time':
+            return f'{random.choice(self.function_dict[function]["return"])} {self.function_dict[function]["function"]()} Uhr.'
+        elif function == 'pi-temp':
+            return f'{random.choice(self.function_dict[function]["return"])} {self.function_dict[function]["function"]()} Grad Celsius.'
         # Execute the function with the given amount
         elif function == 'motor' and amount is not None:
             self.function_dict[function]['function'](amount)

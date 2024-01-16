@@ -9,6 +9,8 @@ class JSON:
         self.function_dict = {
             ('bewege den motor', 'dreh den motor'): 'motor',
             ('zeig mir die temperatur', 'wie warm ist es'): 'temperature',
+            ('wie spät ist es', 'welche uhrzeit haben wir'): 'time',
+            ('wie warm bist du', 'wie heiß ist dein prozessor'): 'pi-temp',
         }
 
         self.response_dict = {

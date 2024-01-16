@@ -15,7 +15,7 @@ class SpeechToText:
         self._channels = 1  # Number of channels
         self._input = True  # Specifies whether this is an input stream
 
-        # Sampling rate in Hz is fixed to our chosen input device
+        # Sampel rate in Hz is fixed to our chosen input device
         self._rate = 16000
 
         self.keyword_detected = False  # Boolean to detect if the keyword is detected

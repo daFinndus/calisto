@@ -7,7 +7,7 @@ from modules.button import Button
 from uart_sender import MyUart
 from stt.vosk_stt import SpeechToText as voskSTT
 
-project_dir = os.path.dirname(os.path.abspath("main.py"))
+project_dir = os.path.dirname(os.path.abspath(__file__))
 model_dir = os.path.join(project_dir, "model")
 
 json = JSON()
@@ -22,6 +22,7 @@ led = LED(11)
 # This function should be executed by pressing a button
 def speak_and_send_data():
     led.set_intensity(255)
+    stt.print_microphone_info()
     data = stt.get_audio_data()['text']
     print(f'Raw data: {data}') if data else print('Sending no data.')
     data = json.to_json(data)
