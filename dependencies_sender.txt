@@ -2,3 +2,4 @@ pip install vosk
 pip install pyaudio
 pip install json
 pip install pickle
+ pip install text2numde
