@@ -43,7 +43,10 @@ class Response:
             'Ich habe dich nicht verstanden.',
             'Bitte wiederhole deine Eingabe.',
             'Es ist ein Fehler aufgetreten.',
-            'Tut mir leid, ich kann dir nicht folgen.'
+            'Tut mir leid, ich kann dir nicht folgen.',
+            'Ich verstehe dich nicht.',
+            'Bitte achte auf das Skript.',
+            'Etwas deutlicher reden bitte.'
         ]
 
     # This function chooses a response based on the input string
@@ -52,8 +55,10 @@ class Response:
             return self.execute_response(json_object)
         elif json_object['type'] == 'function':
             return self.execute_function(json_object)
-        else:
+        elif json_object['type'] == 'error':
             return random.choice(self.error_list)
+        else:
+            return 'Es ist ein Fehler aufgetreten.'
 
     # This function is for executing functions
     def execute_function(self, json_object):

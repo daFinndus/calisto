@@ -22,13 +22,23 @@ class JSON:
         json_object = {'input': data,
                        'output': ()}
 
+        # Check if data contains a response
         response_info = self.detect_response(data)
         if response_info is not None:
             json_object.update(response_info)
 
+        # If data wasn't a response, check for function
         function_info = self.detect_function(data)
         if function_info is not None:
             json_object.update(function_info)
+
+        # If data wasn't a response or a function, return an error
+        if response_info is None and function_info is None:
+            print('No response or function found, going to implement an error.')
+            error_info = {'output': {'type': 'error'}}
+            json_object.update(error_info)
+        else:
+            print('The if-statement was not entered.')
 
         json_string = json.dumps(json_object)
         return json_string
