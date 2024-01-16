@@ -1,22 +1,42 @@
 import random
 
+from modules.stepper_motor import StepperMotor
 from modules.temp_sens import TempSensor
 
 
 class Response:
     def __init__(self):
+        self.stepper_motor = StepperMotor()
         self.temp_sensor = TempSensor(1, 64)
 
         # TODO: Also implement the motor
         self.function_dict = {
-            ("temperatur",): {
-                "function": self.temp_sensor.measure_temp,
-                "return": [
-                    f'Die Temperatur beträgt {self.temp_sensor.measure_temp()} Grad Celsius.',
-                    f'Aktuell sind es {self.temp_sensor.measure_temp()} Grad Celsius.',
-                    f'Wir haben gerade {self.temp_sensor.measure_temp()} Grad Celsius.'
+            'motor': {
+                'function': self.stepper_motor.do_clockwise_degrees,
+                'return': [
+                    f'Der Motor dreht sich nun.',
+                    f'Ich habe den Motor gedreht.',
+                    f'Ich habe den Motor bewegt.',
+                ]
+            },
+            # FIXME: Temperature does not get refreshed, stays at the same value
+            'temperature': {
+                'function': self.temp_sensor.measure_temp,
+                'return': [
+                    f'Die Temperatur beträgt',
+                    f'Aktuell sind es',
+                    f'Wir haben gerade',
                 ],
             },
+        }
+
+        # TODO: Create more responses
+        self.responses_dict = {
+            'greeting': ['Hallo!', 'Hi!', 'Guten Tag!', 'Moin moin!'],
+            'feeling': [
+                'Mir geht es gut!', 'Mir geht es schlecht.', 'Wundervoll!', 'Ich bin müde.', 'Ich bin gut drauf.',
+                'Mir geht es spitze.', 'Ich bin gut gelaunt.', 'Ich bin schlecht gelaunt.', 'Ich bin traurig.',
+            ],
         }
 
         self.error_list = [
@@ -26,34 +46,35 @@ class Response:
             'Tut mir leid, ich kann dir nicht folgen.'
         ]
 
-        # TODO: Create more responses
-        self.responses_dict = {
-            'greeting': ["Hallo!", "Hi!", "Guten Tag!", "Moin moin!"],
-            'feeling': ["Mir geht es gut!", "Mir geht es schlecht.", "Wundervoll!"],
-        }
-
     # This function chooses a response based on the input string
     def to_response(self, json_object):
         if json_object['type'] == 'response':
-            self.execute_response(json_object)
+            return self.execute_response(json_object)
         elif json_object['type'] == 'function':
             return self.execute_function(json_object)
         else:
             return random.choice(self.error_list)
 
-            # This function is for executing functions
-
+    # This function is for executing functions
     def execute_function(self, json_object):
         function = json_object['keyword']
+        print(f'Function: {function}')
         amount = json_object['amount'] if 'amount' in json_object else None
+        print(f'Amount: {amount}')
 
-        for function_entry in self.function_dict:
-            if function == function_entry and amount is None:
-                function_entry['function']()
-            else:
-                function_entry['function'](amount)
-            return random.choice(function_entry['return'])
+        if function == 'temperature':
+            self.function_dict[function]['function']()
+            return f'{random.choice(self.function_dict[function]["return"])} {self.temp_sensor.measure_temp()} Grad Celsius.'
+        # Execute the function with the given amount
+        elif function == 'motor' and amount is not None:
+            self.function_dict[function]['function'](amount)
+            return random.choice(self.function_dict[function]['return'])
+        # Choose a random value if no amount is given
+        elif function == 'motor' and amount is None:
+            self.function_dict[function]['function'](random.randint(45, 180))
+            return random.choice(self.function_dict[function]['return'])
 
+    # This should work as expected
     def execute_response(self, json_object):
         keyword = json_object['keyword']
         details = json_object['details']

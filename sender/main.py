@@ -14,8 +14,8 @@ json = JSON()
 
 stt = voskSTT(model_dir)
 uart = MyUart('/dev/ttyS0')
-button = Button(16)
 
+button = Button(16)
 led = LED(11)
 
 
