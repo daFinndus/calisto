@@ -36,6 +36,7 @@ if __name__ == '__main__':
     led.set_intensity(0)
 
     while True:
+        # Activate the sender side application by pressing the button
         if button.tap_button():
             speak_and_send_data()
             time.sleep(1)

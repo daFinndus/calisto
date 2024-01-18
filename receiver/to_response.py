@@ -47,7 +47,11 @@ class Response:
             }
         }
 
+        # Intro, ready and abilities are not tested yet
         self.responses_dict = {
+            'introduction': ['Hallo. Ich bin ein Sprachassistent von Finn, Darren und Jonas.'],
+            'ready': ['Ich bin bereit.', 'Ich bin startklar.', 'Wir können loslegen.'],
+            'abilities': 'Ich kann dir die Temperatur ausgeben, den Motor bewegen, mich mit dir unterhalten und und und.',
             'greeting': ['Hallo!', 'Hi!', 'Guten Tag!', 'Moin moin!'],
             'feeling': [
                 'Mir geht es gut!', 'Mir geht es schlecht.', 'Wundervoll!', 'Ich bin müde.', 'Ich bin gut drauf.',

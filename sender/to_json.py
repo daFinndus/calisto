@@ -14,6 +14,9 @@ class JSON:
         }
 
         self.response_dict = {
+            ('wer bist du', 'stell dich vor', 'was bist du'): 'introduction',
+            ('bist du bereit', 'kann es losgehen', 'können wir starten'): 'ready',
+            ('was kannst du', 'was für funktionen hast du'): 'abilities',
             ('hallo', 'moin', 'hi', 'hey', 'guten tag'): 'greeting',
             ('wie geht es dir', 'wie gehts dir', 'wie gehts'): 'feeling',
         }
