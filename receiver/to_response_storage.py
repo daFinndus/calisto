@@ -53,7 +53,10 @@ class ResponseStorage:
             'introduction': ['Hallo. Ich bin ein Sprachassistent von Finn, Darren und Jonas.'],
             'ready': ['Ich bin bereit.', 'Ich bin startklar.', 'Wir können loslegen.'],
             'abilities': [
-                'Ich kann dir die Temperatur ausgeben, den Motor bewegen, mich mit dir unterhalten und und und.'],
+                'Ich kann dir die Temperatur ausgeben, den Motor bewegen, mich mit dir unterhalten und und und.',
+                'Ich bin ein Sprachassistent, der dir die Temperatur ausgeben kann, den Motor bewegen kann und mehr.',
+                'Ich bin in der Lage, dir die Temperatur auszugeben, den Motor zu bewegen und mich mit dir zu unterhalten.'
+            ],
             'greeting': ['Hallo!', 'Hi!', 'Guten Tag!', 'Moin moin!'],
             'feeling': [
                 'Mir geht es gut!', 'Mir geht es schlecht.', 'Wundervoll!', 'Ich bin müde.', 'Ich bin gut drauf.',
