@@ -10,7 +10,6 @@ from PyQt5 import QtWidgets
 from to_response import Response
 
 
-# FIXME: Sometimes output is empty, that throws an error
 # Listen for something via uart and text-to-speech it
 def get_data_and_speak():
     while True:
@@ -18,7 +17,6 @@ def get_data_and_speak():
         # Show if we got data or not
         print(f'Got data: {data}') if data else print('No data received...')
         if data:
-            print('If-Statement entered')
             try:
                 # Format json string to json object
                 json_object = json.loads(data)
@@ -29,6 +27,7 @@ def get_data_and_speak():
                 print(f'Response: {response_data}')
                 py_gui.change_output(response_data)
                 tts.speak_text(response_data)
+                uart.send_data('finished')  # Send 'finished' to the sender, so he knows we are done
             except Exception as e:
                 print(f'Error processing JSON: {e}')
 

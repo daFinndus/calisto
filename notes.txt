@@ -1,7 +1,0 @@
-- Program should:
-
-    - Take a voice input and translate it to text
-    - Answers with a text-to-speech output
-    - Make use of certain modules (LED, Steppermotor, Camera)
-
-    - One pi should take the input, the other pi should perform the output and translate it into functions

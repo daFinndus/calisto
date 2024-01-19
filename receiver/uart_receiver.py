@@ -14,3 +14,11 @@ class MyUart:
         except Exception as e:
             print(e)
             return 'Error while reading data from uart'
+
+    # Function to sending strings as bytes
+    def send_data(self, data):
+        try:
+            self.ser.write(data.encode())
+        except Exception as e:
+            print(e)
+            return 'Error while sending data via uart'

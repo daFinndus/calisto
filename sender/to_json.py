@@ -1,25 +1,16 @@
 import json
 import text2numde
 
+from to_json_storage import JsonStorage
+
 
 class JSON:
     def __init__(self):
         self.data_edited = False
+        self.storage = JsonStorage()
 
-        self.function_dict = {
-            ('bewege den motor', 'dreh den motor'): 'motor',
-            ('zeig mir die temperatur', 'wie warm ist es'): 'temperature',
-            ('wie spät ist es', 'welche uhrzeit haben wir'): 'time',
-            ('wie warm bist du', 'wie heiß ist dein prozessor'): 'pi-temp',
-        }
-
-        self.response_dict = {
-            ('wer bist du', 'stell dich vor', 'was bist du'): 'introduction',
-            ('bist du bereit', 'kann es losgehen', 'können wir starten'): 'ready',
-            ('was kannst du', 'was für funktionen hast du'): 'abilities',
-            ('hallo', 'moin', 'hi', 'hey', 'guten tag'): 'greeting',
-            ('wie geht es dir', 'wie gehts dir', 'wie gehts'): 'feeling',
-        }
+        self.function_dict = self.storage.function_dict
+        self.response_dict = self.storage.response_dict
 
     def to_json(self, data):
         self.data_edited = False
@@ -38,12 +29,10 @@ class JSON:
             json_object.update(function_info)
 
         # If data wasn't a response or a function, return an error
-        if response_info is None and function_info is None:
+        if not response_info and not function_info:
             print('No response or function found, going to implement an error.')
             error_info = {'output': {'type': 'error'}}
             json_object.update(error_info)
-        else:
-            print('The if-statement was not entered.')
 
         json_string = json.dumps(json_object)
         return json_string
@@ -62,6 +51,7 @@ class JSON:
                         print(f'Found function: {function}')
                         json_object['type'] = 'function'
                         json_object['keyword'] = self.function_dict[function_entry]
+                        json_object['details'] = data
                         # Check if data contains a number
                         if self.function_dict[function_entry] == 'motor':
                             # Go through every word and try to find numbers
@@ -74,17 +64,15 @@ class JSON:
                                         print(f'Found amount: {data_split}')
                                         json_object['amount'] = data_split
                                 except Exception as e:
-                                    print(f'Error: {e}')
+                                    print(f'Error while text2numde: {e}')
                         self.data_edited = True
                         return {'output': json_object}
                     else:
                         print(f"Didn't find function: {function_entry}")
 
     # Detect response keywords, if found, return a json object
-    # FIXME: They also detect something like 'ich' in 'mich', fix that
     def detect_response(self, data):
         data = data.lower()
-        data_single = data.split(' ')
 
         json_object = {}
 

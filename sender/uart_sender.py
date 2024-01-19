@@ -15,3 +15,12 @@ class MyUart:
         except Exception as e:
             print(e)
             return 'Error while sending data via uart'
+
+    # Function to read data from uart
+    def read_data(self):
+        try:
+            data = self.ser.readline().decode('utf-8').strip()
+            return data
+        except Exception as e:
+            print(e)
+            return 'Error while reading data from uart'
