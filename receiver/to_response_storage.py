@@ -48,7 +48,6 @@ class ResponseStorage:
             }
         }
 
-        # Intro, ready and abilities are not tested yet
         self.responses_dict = {
             'introduction': ['Hallo. Ich bin ein Sprachassistent von Finn, Darren und Jonas.'],
             'ready': ['Ich bin bereit.', 'Ich bin startklar.', 'Wir können loslegen.'],
