@@ -15,31 +15,8 @@ class SpeechToText:
         self._channels = 1  # Number of channels
         self._input = True  # Specifies whether this is an input stream
 
-        # Sampel rate in Hz is fixed to our chosen input device
+        # Rate in Hz is fixed to our chosen input device
         self._rate = 16000
-
-        self.keyword_detected = False  # Boolean to detect if the keyword is detected
-
-    # Function to get all available microphones as a list
-    def get_microphone_list(self):  # Method to check what we want to do with the microphone_list
-        return [
-            self._pyaudio.get_device_info_by_index(i).get("name")  # Get the name out of all available microphones
-            for i in range(self._pyaudio.get_device_count())  # Go through every directory entry
-        ]
-
-    # Function to give information about the current microphone used
-    def print_microphone_info(self):
-        print(self._pyaudio.get_device_info_by_index(self._input_index))
-
-    # Function to set our microphone
-    def set_microphone_device(self, mic_name, mic_list):
-        __matching_indices = [i for i, mic in enumerate(mic_list) if mic_name in mic]
-
-        if __matching_indices:
-            self._input_index = __matching_indices[0]
-            print(f"Microphone device set to: {mic_list[self._input_index]}")
-        else:
-            print("Device not found.")
 
     # Function to listen for audio data
     def get_audio_data(self):
@@ -67,8 +44,3 @@ class SpeechToText:
         finally:
             __stream.stop_stream()
             __stream.close()
-
-    # Function to print audio_data
-    @staticmethod
-    def print_audio(audio_data):
-        print(audio_data)

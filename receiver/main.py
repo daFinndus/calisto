@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QMainWindow()
-    py_gui = Functions_PyGUI(Ui_MainWindow, Dialog, uart)
+    py_gui = Functions_PyGUI(Ui_MainWindow, Dialog)
 
     threading.Thread(target=get_data_and_speak).start()
 

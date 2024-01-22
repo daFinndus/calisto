@@ -14,27 +14,8 @@ class TextToSpeech:
                 self.engine.setProperty('voice', voice.id)
                 break
 
-    # Function to get the current speaking rate
-    def get_rate(self):
-        rate = self.engine.getProperty("rate")
-        return rate
-
-    # Function to return the current volume
-    def get_volume(self):
-        volume = self.engine.getProperty("volume")
-        return volume
-
-    # Function to get the voices
-    def get_voices(self):
-        voices = self.engine.getProperty("voices")
-        return voices
-
     # Function for returning certain text as speech
     def speak_text(self, text_data):
         if text_data != '':
             self.engine.say(text_data)
             self.engine.runAndWait()
-
-    # Save the spoken text to a file
-    def save_to_file(self):
-        self.engine.save_to_file("Sample", "voice.mp3")

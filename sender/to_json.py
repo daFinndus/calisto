@@ -48,7 +48,6 @@ class JSON:
             for function_entry in self.function_dict:
                 for function in function_entry:
                     if function in data:
-                        print(f'Found function: {function}')
                         json_object['type'] = 'function'
                         json_object['keyword'] = self.function_dict[function_entry]
                         json_object['details'] = data
@@ -67,8 +66,6 @@ class JSON:
                                     print(f'Error while text2numde: {e}')
                         self.data_edited = True
                         return {'output': json_object}
-                    else:
-                        print(f"Didn't find function: {function_entry}")
 
     # Detect response keywords, if found, return a json object
     def detect_response(self, data):
@@ -81,7 +78,6 @@ class JSON:
                 for response in response_entry:
                     if response in data:
                         try:
-                            print(f"Found response: {response}")
                             json_object['type'] = 'response'
                             json_object['keyword'] = self.response_dict[response_entry]
                             json_object['details'] = response
@@ -90,5 +86,3 @@ class JSON:
                         except Exception as e:
                             print(f'Error: {e}')
                             json_object['type'] = 'error'
-                    else:
-                        print(f"Didn't find response: {response}")

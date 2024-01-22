@@ -25,7 +25,6 @@ led = LED(11)
 def speak_and_send_data():
     button_bool = False  # Disable the button for the following process
     led.set_intensity(255)
-    stt.print_microphone_info()
     data = stt.get_audio_data()['text']
     print(f'Raw data: {data}') if data else print('Sending no data.')
     data = json.to_json(data)
