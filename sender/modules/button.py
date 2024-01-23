@@ -2,6 +2,7 @@ from RPi import GPIO
 from time import sleep
 
 
+# Our class for the button module of the sender pi
 class Button:
     def __init__(self, pin):
         GPIO.setwarnings(False)  # Mute all these irrelevant warnings, don't need them anyway

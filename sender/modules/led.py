@@ -1,6 +1,7 @@
 from RPi import GPIO
 
 
+# Our class for the LED module of the sender pi
 class LED:
     def __init__(self, pin):
         GPIO.setmode(GPIO.BOARD)  # Address pins with their numbers

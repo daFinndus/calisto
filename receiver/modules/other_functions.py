@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 
 
+# Class for other functions
 class OtherFunctions:
     def __init__(self):
         pass

@@ -4,6 +4,7 @@ import text2numde
 from to_json_storage import JsonStorage
 
 
+# This class is used for converting the data from the speech to text module into a json string
 class JSON:
     def __init__(self):
         self.data_edited = False
@@ -48,24 +49,27 @@ class JSON:
             for function_entry in self.function_dict:
                 for function in function_entry:
                     if function in data:
-                        json_object['type'] = 'function'
-                        json_object['keyword'] = self.function_dict[function_entry]
-                        json_object['details'] = data
-                        # Check if data contains a number
-                        if self.function_dict[function_entry] == 'motor':
-                            # Go through every word and try to find numbers
-                            for data_split in data_split_list:
-                                try:
-                                    # Convert words into real numbers
-                                    data_split = text2numde.text2num(data_split)
-                                    print(type(data_split))
-                                    if isinstance(data_split, int):
-                                        print(f'Found amount: {data_split}')
-                                        json_object['amount'] = data_split
-                                except Exception as e:
-                                    print(f'Error while text2numde: {e}')
-                        self.data_edited = True
-                        return {'output': json_object}
+                        try:
+                            json_object['type'] = 'function'
+                            json_object['keyword'] = self.function_dict[function_entry]
+                            json_object['details'] = data
+                            # Check if data contains a number
+                            if self.function_dict[function_entry] == 'motor':
+                                # Go through every word and try to find numbers
+                                for data_split in data_split_list:
+                                    try:
+                                        # Convert words into real numbers
+                                        data_split = text2numde.text2num(data_split)
+                                        print(type(data_split))
+                                        if isinstance(data_split, int):
+                                            print(f'Found amount: {data_split}')
+                                            json_object['amount'] = data_split
+                                    except Exception as e:
+                                        print(f'Error while text2numde: {e}')
+                            self.data_edited = True
+                            return {'output': json_object}
+                        except Exception as e:
+                            print(f'Error while generating function object: {e}')
 
     # Detect response keywords, if found, return a json object
     def detect_response(self, data):
@@ -84,5 +88,4 @@ class JSON:
                             self.data_edited = True
                             return {'output': json_object}
                         except Exception as e:
-                            print(f'Error: {e}')
-                            json_object['type'] = 'error'
+                            print(f'Error while generating response object: {e}')

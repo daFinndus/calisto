@@ -24,7 +24,6 @@ def get_data_and_speak():
                 py_gui.change_input(json_object['input'])
                 # Create a response
                 response_data = response.to_response(json_object['output'])
-                print(f'Response: {response_data}')
                 py_gui.change_output(response_data)
                 tts.speak_text(response_data)
                 uart.send_data('finished')  # Send 'finished' to the sender, so he knows we are done
@@ -41,6 +40,7 @@ if __name__ == '__main__':
     Dialog = QtWidgets.QMainWindow()
     py_gui = Functions_PyGUI(Ui_MainWindow, Dialog)
 
+    # We use this thread for executing the get_data_and_speak function while the gui is running
     threading.Thread(target=get_data_and_speak).start()
 
     Dialog.show()  # Show our window

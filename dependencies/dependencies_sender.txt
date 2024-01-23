@@ -1,3 +1,5 @@
+These are the libraries and packages used by the sender pi
+
 pip install vosk
 pip install pyaudio
 pip install json

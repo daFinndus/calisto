@@ -15,7 +15,7 @@ class MyUart:
             print(e)
             return 'Error while reading data from uart'
 
-    # Function to sending strings as bytes
+    # Function to send data via uart
     def send_data(self, data):
         try:
             self.ser.write(data.encode())

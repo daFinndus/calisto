@@ -6,6 +6,7 @@ from modules.stepper_motor import StepperMotor
 from modules.temp_sens import TempSensor
 
 
+# This class is used for converting the data from the json object to a response or a function, based on its content
 class Response:
     def __init__(self):
         self.stepper_motor = StepperMotor()
@@ -31,9 +32,7 @@ class Response:
     # This function is for executing functions
     def execute_function(self, json_object):
         function = json_object['keyword']
-        print(f'Function: {function}')
         amount = json_object['amount'] if 'amount' in json_object else random.randint(45, 180)
-        print(f'Amount: {amount}')
 
         if function == 'temperature':
             return f'{random.choice(self.function_dict[function]["return"])} {self.temp_sensor.measure_temp()} Grad Celsius.'
@@ -56,7 +55,7 @@ class Response:
             self.stepper_motor.clean_up_gpio()
             return random.choice(self.function_dict[function]["return"])
 
-    # This should work as expected
+    # This function is for getting a response
     def execute_response(self, json_object):
         keyword = json_object['keyword']
         details = json_object['details']

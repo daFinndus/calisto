@@ -7,6 +7,7 @@ from modules.button import Button
 from uart_sender import MyUart
 from stt.vosk_stt import SpeechToText as voskSTT
 
+# Get the path of the module folder, the folder is necessary for the vosk library and contains a german model
 project_dir = os.path.dirname(os.path.abspath(__file__))
 model_dir = os.path.join(project_dir, "model")
 
@@ -22,6 +23,7 @@ led = LED(11)
 
 
 # This function should be executed by pressing a button
+# It is for listening to the user and sending the data to the receiver pi via uart
 def speak_and_send_data():
     button_bool = False  # Disable the button for the following process
     led.set_intensity(255)

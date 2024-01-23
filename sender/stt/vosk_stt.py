@@ -3,6 +3,7 @@ import pyaudio
 from vosk import Model, KaldiRecognizer
 
 
+# Our class for speech to text
 class SpeechToText:
     def __init__(self, model_path):
         self._model = Model(model_path)  # Set the model for vosk with a certain path
@@ -18,7 +19,7 @@ class SpeechToText:
         # Rate in Hz is fixed to our chosen input device
         self._rate = 16000
 
-    # Function to listen for audio data
+    # Function to listen for audio data and returning it as a string
     def get_audio_data(self):
         # Open the microphone stream
         __stream = self._pyaudio.open(format=self._format, channels=self._channels, rate=self._rate, input=self._input)
